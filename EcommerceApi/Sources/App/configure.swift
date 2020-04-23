@@ -1,32 +1,35 @@
-import FluentSQLite
 import Vapor
+import FluentPostgreSQL
+import PostgreSQL
+import Authentication
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-    // Register providers first
-    try services.register(FluentSQLiteProvider())
-
-    // Register routes to the router
+    try services.register(FluentPostgreSQLProvider())
+    try services.register(AuthenticationProvider())
+    
     let router = EngineRouter.default()
     try routes(router)
+    
+    var middleware = MiddlewareConfig()
+    middleware.use(FileMiddleware.self)
+    middleware.use(ErrorMiddleware.self)
+    
+    
+    let pgConfig = PostgreSQLDatabaseConfig(hostname: "127.0.0.1",
+                                            port: 5432,
+                                            username: "postgres",
+                                            database: "Ecommerce",
+                                            password: "MaznikerProperty1",
+                                            transport: .cleartext)
+    let pgConnection = PostgreSQLDatabase(config: pgConfig)
+    
+    var database = DatabaseConfig()
+    database.add(database: pgConnection, as: .psql)
+    database.enableLogging(on: .psql)
+    
     services.register(router, as: Router.self)
-
-    // Register middleware
-    var middlewares = MiddlewareConfig() // Create _empty_ middleware config
-    // middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
-    middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
-    services.register(middlewares)
-
-    // Configure a SQLite database
-    let sqlite = try SQLiteDatabase(storage: .memory)
-
-    // Register the configured SQLite database to the database config.
-    var databases = DatabasesConfig()
-    databases.add(database: sqlite, as: .sqlite)
-    services.register(databases)
-
-    // Configure migrations
-    var migrations = MigrationConfig()
-    migrations.add(model: Todo.self, database: .sqlite)
-    services.register(migrations)
+    services.register(middleware)
+    services.register(database)
+    
 }
