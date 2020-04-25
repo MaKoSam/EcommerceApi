@@ -9,6 +9,7 @@ import Foundation
 import Vapor
 
 struct AddRequest: Codable {
+    var adminPassword: String
     var name: String
     var price: Int
 }

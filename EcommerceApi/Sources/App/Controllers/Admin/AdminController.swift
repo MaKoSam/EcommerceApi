@@ -32,6 +32,9 @@ final class AdminController {
     
     func addItem(_ request: Request) throws -> Future<AddResponse> {
         return try request.content.decode(AddRequest.self).flatMap{ addItem in
+            if addItem.adminPassword != keychain.adminPassword {
+                throw Abort(.badRequest, reason: "Admin access denied")
+            }
             let newItem = try Items.create(name: addItem.name, price: addItem.price)
             return newItem.save(on: request).map { saved in
                 return AddResponse(success: true)
