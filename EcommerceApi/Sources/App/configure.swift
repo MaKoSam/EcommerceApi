@@ -33,8 +33,10 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     migrations.add(model: Users.self, database: DatabaseIdentifier<Users.Database>.psql)
     migrations.add(model: UserToken.self, database: DatabaseIdentifier<UserToken.Database>.psql)
+    migrations.add(model: UserInfo.self, database: DatabaseIdentifier<UserInfo.Database>.psql)
     services.register(migrations)
     
     Users.defaultDatabase = .psql
     UserToken.defaultDatabase = .psql
+    UserInfo.defaultDatabase = .psql
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 struct Keychain {
-    let password = "MaznikerProperty1"
+    let password = "..."
 }
 
 var keychain = Keychain()

@@ -16,7 +16,7 @@ final class UserToken: PostgreSQLModel {
     var id: Int?
     var accessToken: String
     var refreshToken: String
-    var expiresAt: Int = Int(Date().timeIntervalSince1970) + 24 * 60 * 60
+    var expiresAt: Int
     var userID: Users.ID
     
     var users: Parent<UserToken, Users> {
@@ -28,6 +28,7 @@ final class UserToken: PostgreSQLModel {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.userID = userID
+        self.expiresAt = Int(Date().timeIntervalSince1970) + 24 * 60 * 60
     }
     
     static func create(userID: Users.ID) throws -> UserToken {
