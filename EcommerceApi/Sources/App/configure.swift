@@ -34,9 +34,11 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Users.self, database: DatabaseIdentifier<Users.Database>.psql)
     migrations.add(model: UserToken.self, database: DatabaseIdentifier<UserToken.Database>.psql)
     migrations.add(model: UserInfo.self, database: DatabaseIdentifier<UserInfo.Database>.psql)
+    migrations.add(model: UserAddress.self, database: DatabaseIdentifier<UserAddress.Database>.psql)
     services.register(migrations)
     
     Users.defaultDatabase = .psql
     UserToken.defaultDatabase = .psql
     UserInfo.defaultDatabase = .psql
+    UserAddress.defaultDatabase = .psql
 }

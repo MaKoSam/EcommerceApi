@@ -23,11 +23,16 @@ final class AuthController {
             
             return newUser.save(on: request).flatMap { createdUser in
                 let accessToken = try UserToken.create(userID: createdUser.requireID())
-                let userInfo = try UserInfo.create(for: createdUser.requireID(), email: createdUser.email)
-                
                 return accessToken.save(on: request).flatMap { resultToken in
-                    return userInfo.save(on: request).map { saved in
-                        return AuthResponse(accessToken: resultToken.accessToken, refreshToken: resultToken.refreshToken)
+                    
+                    let userInfo = try UserInfo.create(for: createdUser.requireID(), email: createdUser.email)
+                    return userInfo.save(on: request).flatMap { saved in
+                        
+                        let userAddress = try UserAddress.create(for: createdUser.requireID())
+                        return userAddress.save(on: request).map { address in
+                            
+                            return AuthResponse(accessToken: resultToken.accessToken, refreshToken: resultToken.refreshToken)
+                        }
                     }
                 }
             }
