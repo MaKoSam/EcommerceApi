@@ -31,7 +31,7 @@ final class AuthController {
                         let userAddress = try UserAddress.create(for: createdUser.requireID())
                         return userAddress.save(on: request).map { address in
                             
-                            return AuthResponse(accessToken: resultToken.accessToken, refreshToken: resultToken.refreshToken)
+                            return AuthResponse(username: createdUser.username, email: createdUser.email, accessToken: resultToken.accessToken, refreshToken: resultToken.refreshToken, expires: resultToken.expiresAt)
                         }
                     }
                 }
@@ -58,7 +58,7 @@ final class AuthController {
                             throw Abort(.badRequest, reason: "User doesn't exist or password is wrong")
                     }
                     
-                    return AuthResponse(accessToken: token, refreshToken: refreshToken, expires: expires)
+                    return AuthResponse(username: result.username, email: result.email, accessToken: token, refreshToken: refreshToken, expires: expires)
                 }
                 
             }

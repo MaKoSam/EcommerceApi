@@ -9,5 +9,6 @@ import Foundation
 import Vapor
 
 struct GetRequest: Codable {
+    var page: Int?
     var accessToken: String
 }

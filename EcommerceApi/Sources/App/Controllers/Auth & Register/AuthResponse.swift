@@ -9,6 +9,8 @@ import Foundation
 import Vapor
 
 struct AuthResponse: Content{
+    var username: String
+    var email: String
     var accessToken: String
     var refreshToken: String
     var expires: Int? = nil
