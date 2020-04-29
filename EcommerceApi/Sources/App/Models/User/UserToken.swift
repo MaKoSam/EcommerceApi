@@ -36,6 +36,12 @@ final class UserToken: PostgreSQLModel {
         let refreshToken = try CryptoRandom().generateData(count: 16).base64EncodedString()
         return .init(accessToken: accessToken, refreshToken: refreshToken, userID: userID)
     }
+    
+    static func refresh(token: UserToken) throws -> UserToken {
+        token.accessToken = try CryptoRandom().generateData(count: 16).base64EncodedString()
+        token.expiresAt = Int(Date().timeIntervalSince1970) + 24 * 60 * 60
+        return token
+    }
 }
 
 extension Users: TokenAuthenticatable {

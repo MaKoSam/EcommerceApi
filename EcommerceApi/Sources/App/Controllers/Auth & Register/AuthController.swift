@@ -44,7 +44,7 @@ final class AuthController {
             Users.query(on: request).filter(\Users.username, .equal, auth.username).first().flatMap { result in
                 guard let result = result,
                     let userID = result.id else {
-                    throw Abort(.badRequest, reason: "User doesn't exist or password is wrong")
+                        throw Abort(.badRequest, reason: "User doesn't exist or password is wrong")
                 }
                 
                 guard try BCrypt.verify(auth.password, created: result.passwordHash) else {
@@ -62,17 +62,34 @@ final class AuthController {
                 }
                 
             }
-            
         }
     }
     /*
-    func restorePassword(_ request: Request) -> Future<HTTPResponse>{
-        
-    }
+     func restorePassword(_ request: Request) -> Future<HTTPResponse>{
+     
+     }*/
     
-    func refreshToken(_ request: Request) -> Future<HTTPResponse>{
-        
+    func refreshToken(_ request: Request) throws -> Future<AuthResponse>{
+        return try request.content.decode(RefreshRequest.self).flatMap { auth in
+            UserToken.query(on: request).filter(\UserToken.refreshToken, .equal, auth.refreshToken).first().flatMap { result in
+                guard var result = result,
+                    let userID = result.id else {
+                        throw Abort(.badRequest, reason: "User doesn't exist")
+                }
+                result = try UserToken.refresh(token: result)
+                
+                return result.update(on: request).flatMap { token in
+                    
+                    return Users.query(on: request).filter(\Users.id, .equal, userID).first().map { user in
+                        
+                        guard let user = user else {
+                            throw Abort(.badRequest, reason: "User doesn't exist")
+                        }
+                        
+                        return AuthResponse(username: user.username, email: user.email, accessToken: token.accessToken, refreshToken: token.refreshToken, expires: token.expiresAt)
+                    }
+                }
+            }
+        }
     }
-    */
-    
 }

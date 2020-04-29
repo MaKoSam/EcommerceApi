@@ -17,7 +17,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middleware.use(ErrorMiddleware.self)
     services.register(middleware)
     
-    let pgConfig = PostgreSQLDatabaseConfig(hostname: "195.133.1.8",
+    let pgConfig = PostgreSQLDatabaseConfig(hostname: "127.0.0.1",
                                             port: 5432,
                                             username: "postgres",
                                             database: "Ecommerce",
