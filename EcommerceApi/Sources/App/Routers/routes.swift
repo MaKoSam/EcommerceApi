@@ -7,6 +7,9 @@ public func routes(_ router: Router) throws {
     let addressController = UserAddressController()
     let admin = AdminController()
     let shop = ItemsController()
+    let color = ColorController()
+    let size = SizeController()
+    let category = CategoryController()
     
     router.group("admin"){ group in
         group.post("configure", use: admin.config) //Тестинг, Запускать для конфигурации стандартных размерой/категорий товаров
@@ -30,8 +33,10 @@ public func routes(_ router: Router) throws {
         group.post("update", use: addressController.updateAddress)
     }
     
-    router.group("shop_items"){ group in
-        group.post("get", use: shop.get)
-        
+    router.group("shop"){ group in
+        group.post("get_items", use: shop.get)
+        group.post("get_category", use: category.get)
+        group.post("get_size", use: size.get)
+        group.post("get_color", use: color.get)
     }
 }
